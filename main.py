@@ -8,6 +8,7 @@ from copy import deepcopy
 from pathlib import Path
 import os
 import json
+import time
 
 LABELS_PATH = Path("data/labels").resolve()
 SCREENS_PATH = Path("data/images").resolve()
@@ -43,6 +44,7 @@ def make_screen_shot(screen, players: pygame.sprite.Group):
 
 
 def main():
+    start = time.time()
     # Initialise screen
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -98,7 +100,9 @@ def main():
         #    player.draw_rect(screen)
 
         pygame.display.flip()
-        make_screen_shot(screen, players)
+        if time.time() - start > 1:
+            make_screen_shot(screen, players)
+            start = time.time()
 
 
 if __name__ == "__main__":
