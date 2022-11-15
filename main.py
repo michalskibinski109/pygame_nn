@@ -14,7 +14,7 @@ SCREENS_PATH = Path("data/images").resolve()
 
 WIDTH, HEIGHT = 960, 640
 FPS = 120
-PLAYERS_NUM = 2
+PLAYERS_NUM = 5
 FRAME = 0
 
 
