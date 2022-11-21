@@ -13,9 +13,11 @@ import time
 LABELS_PATH = Path("data/labels").resolve()
 SCREENS_PATH = Path("data/images").resolve()
 
-WIDTH, HEIGHT = 960, 640
+WIDTH, HEIGHT = 256, 256
 FPS = 120
-PLAYERS_NUM = 5
+FRAMES_PER_SEC = 10
+PLAYERS_NUM = 1
+OBJ = "player.png"
 FRAME = 0
 
 
@@ -58,14 +60,18 @@ def main():
     players = pygame.sprite.Group()
     for player_num in range(PLAYERS_NUM):
         # randomize player position
-        name = np.random.choice(["player.png", "enemy.png"])
+        if PLAYERS_NUM == 1:
+            name = np.random.choice(["player.png"])
+        else:
+            name = np.random.choice(["player.png", "enemy.png"])
+
         angle = np.random.uniform(0, 2 * np.pi)
         z = np.random.randint(3, 5)
         position = (
             np.random.randint(0, WIDTH - 100),
             np.random.randint(0, HEIGHT - 200),
         )
-        width = np.random.randint(50, 150)
+        width = np.random.randint(WIDTH / 6, WIDTH / 3)
         player = Player(
             name=name,
             vector=(angle, z),
@@ -100,7 +106,7 @@ def main():
         #    player.draw_rect(screen)
 
         pygame.display.flip()
-        if time.time() - start > 1:
+        if time.time() - start > FRAMES_PER_SEC / FPS:
             make_screen_shot(screen, players)
             start = time.time()
 

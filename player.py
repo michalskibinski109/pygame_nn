@@ -88,4 +88,7 @@ class Player(pygame.sprite.Sprite):
         for player in players:
             if player != self and self.rect.colliderect(player.rect):
                 angle = self.__update_angle(angle, player.rect)
-        self.vector = (angle, z)
+        self.vector = (
+            angle + np.random.random() / 100,
+            z + (np.random.random() - 0.5) / 4,
+        )
