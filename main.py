@@ -15,7 +15,7 @@ SCREENS_PATH = Path("data/images").resolve()
 
 WIDTH, HEIGHT = 256, 256
 FPS = 120
-FRAMES_PER_SEC = 10
+FRAMES_PER_SEC = 20
 PLAYERS_NUM = 1
 OBJ = "player.png"
 FRAME = 0
@@ -29,19 +29,25 @@ def make_screen_shot(screen, players: pygame.sprite.Group):
     os.makedirs(SCREENS_PATH, exist_ok=True)
     os.makedirs(LABELS_PATH, exist_ok=True)
     label = []
-    for player in players:
-        if player.name == "player":
-            coord = []
-            coord += player.rect.topleft
-            coord += player.rect.size
-            label.append(coord)
+    if np.random.random() > 0.2:
+        for player in players:
+            if player.name == "player":
+                coord = []
+                coord += player.rect.topleft
+                coord += player.rect.size
+                label.append(coord)
+    # check if there is a player on the screen
     # normalize label
-    if label:
+    if label and 0 < label[0][0] < WIDTH and 0 < label[0][1] < HEIGHT:
         label = np.array(label)
         label = label / np.array([WIDTH, HEIGHT, WIDTH, HEIGHT])
+        cls = 1
     else:
-        label = np.array([0, 0])
-    json.dump(label.tolist(), open(label_path, "w"))
+        cls = 0
+        label = np.array([[0, 0, 0, 0]])
+        screen = pygame.Surface(screen.get_size())
+    label = {"class": cls, "coord": label.tolist()}
+    json.dump(label, open(label_path, "w"))
     pygame.image.save(screen, img_path)
 
 
