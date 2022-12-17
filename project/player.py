@@ -90,5 +90,5 @@ class Player(pygame.sprite.Sprite):
                 angle = self.__update_angle(angle, player.rect)
         self.vector = (
             angle + np.random.random() / 100,
-            z + (np.random.random() - 0.5) / 4,
+            z ,
         )

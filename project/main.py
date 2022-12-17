@@ -12,11 +12,13 @@ import time
 
 LABELS_PATH = Path("data/labels").resolve()
 SCREENS_PATH = Path("data/images").resolve()
+BACKGROUND_PATH = Path("data/gif_background.png").resolve()
 
+# BACKGROUND_PATH = Path("data/gif_background.").resolve()
 WIDTH, HEIGHT = 256, 256
 FPS = 120
-FRAMES_PER_SEC = 10
-PLAYERS_NUM = 1
+FRAMES_PER_SEC = 20
+PLAYERS_NUM = 2
 OBJ = "player.png"
 FRAME = 0
 
@@ -29,19 +31,28 @@ def make_screen_shot(screen, players: pygame.sprite.Group):
     os.makedirs(SCREENS_PATH, exist_ok=True)
     os.makedirs(LABELS_PATH, exist_ok=True)
     label = []
-    for player in players:
-        if player.name == "player":
-            coord = []
-            coord += player.rect.topleft
-            coord += player.rect.size
-            label.append(coord)
+    if np.random.random() > 0.2:
+        for player in players:
+            if player.name == "player":
+                coord = []
+                coord += player.rect.topleft
+                coord += player.rect.size
+                label.append(coord)
+    # check if there is a player on the screen
     # normalize label
-    if label:
+    if label and 0 < label[0][0] < WIDTH and 0 < label[0][1] < HEIGHT:
         label = np.array(label)
         label = label / np.array([WIDTH, HEIGHT, WIDTH, HEIGHT])
+        cls = 1
     else:
-        label = np.array([0, 0])
-    json.dump(label.tolist(), open(label_path, "w"))
+        cls = 0
+        label = np.array([[0, 0, 0, 0]])
+        # set background as screen
+        screen = pygame.image.load(BACKGROUND_PATH).convert()
+        screen = pygame.transform.scale(screen, (WIDTH, HEIGHT))
+
+    label = {"class": cls, "coord": label.tolist()}
+    json.dump(label, open(label_path, "w"))
     pygame.image.save(screen, img_path)
 
 
@@ -53,10 +64,11 @@ def main():
     pygame.display.set_caption("Basic Pong")
 
     # Fill background
-    background = pygame.Surface(screen.get_size())
-    background = background.convert()
     # blue background
-    background.fill((0, 0, 255))
+    background = pygame.image.load(BACKGROUND_PATH).convert()
+    background = pygame.transform.scale(background, (WIDTH, HEIGHT))
+    screen.blit(background, (0, 0))
+
     players = pygame.sprite.Group()
     for player_num in range(PLAYERS_NUM):
         # randomize player position
